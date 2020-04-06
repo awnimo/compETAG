@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+import os
+import sys
+
+from comp_etag.argsParser import parse_arguments
+from comp_etag.core import *
+
+
+def main():
+
+    data = []
+
+    if args.check:
+        try:
+            f = open(args.check)
+            etags = [i.strip().split() for i in f.readlines()]
+        except OSError as err:
+            print("OS error: {}".format(err))
+            return
+
+        check_hashes(
+            hashes=etags,
+            mode=args.mode,
+            chunk_size=args.chunk_size,
+            bucket=args.bucket,
+            key=args.key,
+            pattern=args.pattern,
+        )
+
+        return
+
+    elif args.mode == "s3uri":
+        data = retrieve_s3uri_etag(
+            bucket=args.bucket, key=args.key, pattern=args.pattern,
+        )
+        data = ["\t".join([e, i]) for e, i in data]
+        data = "\n".join(data)
+
+    elif args.infiles:
+
+        if isinstance(args.infiles, str):
+            args.infiles = [args["infiles"]]
+
+        for i in args.infiles:
+            try:
+                assert os.path.exists(i), "File not found error {}!".format(i)
+            except AssertionError:
+                raise
+
+        result = (
+            map(etag_checksum, args.infiles, [args.chunk_size] * len(args.infiles),)
+            if args.mode == "etag"
+            else map(md5_checksum, args.infiles)
+        )
+        etags = []
+        for r, el in zip(result, args.infiles):
+            print("Computing {} for {} ...".format(args.mode, el))
+            etags.append(r)
+
+        data = ["\t".join([e, i]) for e, i in zip(etags, args.infiles)]
+        data = "\n".join(data)
+
+    if args.fout:
+        with open(args.fout, "w") as f:
+            f.write(data)
+            f.write("\n")
+            f.close()
+        print("{}s written to {}".format(args.mode, f.name))
+    else:
+        print(data)
+
+
+if __name__ == "__main__":
+
+    args = parse_arguments(sys.argv[1:])
+
+    main()
