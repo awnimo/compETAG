@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """\
-Core methods to compute and compare Etags.
+Core methods to compute and compare ETags.
 """
 import re
 import hashlib
@@ -131,7 +131,7 @@ def get_etags_from_s3uri(
     bucket: str = None, key: str = None, pattern: Pattern = None
 ) -> List:
     """\
-    Retrieve Etags of keys in a bucket with objects matching a pattern.
+    Retrieve ETags of keys in a bucket with objects matching a pattern.
 
     :param bucket:
         Bucket name.
@@ -141,7 +141,7 @@ def get_etags_from_s3uri(
         Compiled regular expression object.
 
     :return:
-        list of etags.
+        list of ETags.
     """
     k = get_objects(bucket, key, pattern)
     et = [get_object_etag(bucket, i) for i in k]
@@ -206,7 +206,7 @@ def check_hashes(
         Pairs of md5/etag hashes and file names.
     mode
         Choose between `'etag'`, or `'md5'`, hash digest, or `'s3uri'` to get remote
-        etags.
+        ETags.
     chunk_size
         Chunk size in bytes.
     bucket

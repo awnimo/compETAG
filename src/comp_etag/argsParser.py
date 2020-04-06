@@ -60,7 +60,7 @@ def parse_arguments(argsv: str = "") -> argparse.Namespace:
         dest="infiles",
         action="store",
         nargs="+",
-        help="Input one or more file names to compute Etags.",
+        help="Input one or more file names to compute ETags.",
     )
 
     parser.add_argument(
@@ -125,7 +125,7 @@ def parse_arguments(argsv: str = "") -> argparse.Namespace:
         dest="fout",
         action="store",
         nargs="?",
-        help="Save computed Etags to provided filename.",
+        help="Save computed ETags to provided filename.",
     )
 
     args = parser.parse_args(argsv)
