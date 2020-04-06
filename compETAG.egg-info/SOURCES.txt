@@ -1,0 +1,9 @@
+README.md
+setup.py
+compETAG.egg - info / PKG - INFO
+compETAG.egg - info / SOURCES.txt
+compETAG.egg - info / dependency_links.txt
+compETAG.egg - info / top_level.txt
+etag / __init__.py
+etag / argsParser.py
+etag / main.py
