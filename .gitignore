@@ -1,9 +1,7 @@
-
 *.xml
 *.iml
-*
 .DS_Store
-.idea
+./.idea
 build
 dist
 *.pyc
