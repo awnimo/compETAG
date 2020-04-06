@@ -18,7 +18,7 @@ setup(
     "integrity of files, both locally and on AWS S3.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="",
+    url="https://github.com/awnimo/compETAG",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     scripts=["src/compute_etags"],
