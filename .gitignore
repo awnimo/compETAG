@@ -1,3 +1,9 @@
 
 *.xml
 *.iml
+*
+.DS_Store
+.idea
+build
+dist
+*.pyc
