@@ -3,8 +3,10 @@
 """\
 Core methods to compute and compare ETags.
 """
+import os
 import re
 import hashlib
+import time
 from typing import Union, Tuple, Pattern, List
 
 import boto3
@@ -22,9 +24,12 @@ def md5_checksum(filename: str) -> str:
         `MD5` `hexdigest`
     """
     m = hashlib.md5()
+    print("Computing md5 hash for {} ...".format(filename))
+    t0 = time.time()
     with open(filename, "rb") as f:
         for data in iter(lambda: f.read(1024 * 1024), b""):
             m.update(data)
+    print("md5 computed in {:5.2f} min!".format((time.time() - t0) / 60))
     return m.hexdigest()
 
 
@@ -41,10 +46,16 @@ def etag_checksum(filename: str, chunk_size: int = 8 * 1024 ** 2) -> str:
         `ETag` `hexdigest`
     """
     md5s = []
+    print("Computing ETag with chunk size {}MB for {} ...".format(
+        chunk_size/1024 ** 2, filename
+        )
+    )
+    t0 = time.time()
     with open(filename, "rb") as f:
         for data in iter(lambda: f.read(chunk_size), b""):
             md5s.append(hashlib.md5(data).digest())
     m = hashlib.md5(b"".join(md5s))
+    print("ETag computed in {:5.2f} min!".format((time.time() - t0) / 60))
     return "{}-{}".format(m.hexdigest(), len(md5s)) if len(md5s) > 1 else m.hexdigest()
 
 
@@ -96,6 +107,7 @@ def get_objects(
     :return:
         list of filtered objects in bucket
     """
+    key = key.rstrip("/")
     s3r = boto3.resource("s3")
     bucket_s3 = s3r.Bucket(bucket)
     k = []
@@ -123,6 +135,7 @@ def get_object_etag(bucket: str = None, key: str = None) -> Tuple:
     :return:
         `str`
     """
+    key = key.rstrip("/")
     obj = boto3.resource("s3").Object(bucket, key)
     return obj.e_tag.strip('"'), obj.key
 
@@ -143,6 +156,7 @@ def get_etags_from_s3uri(
     :return:
         list of ETags.
     """
+    key = key.rstrip("/")
     k = get_objects(bucket, key, pattern)
     et = [get_object_etag(bucket, i) for i in k]
 
@@ -236,11 +250,11 @@ def check_hashes(
 
     elif mode == "s3uri":
         if not pattern:
-            pattern = re.compile("|".join([i for e, i in hashes]))
+            pattern = re.compile("|".join([os.path.basename(i) for e, i in hashes]))
         data = retrieve_s3uri_etag(bucket=bucket, key=key, pattern=pattern,)
 
         for e, i in hashes:
-            S3URI_etag = [n for n, m in data if i in m]
+            S3URI_etag = [n for n, m in data if os.path.basename(i) in m]
             S3URI_etag = set(S3URI_etag)
             if S3URI_etag:
                 for et in S3URI_etag:

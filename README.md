@@ -19,7 +19,7 @@ To retrieve ETags from objects on AWS S3, setting mode to `s3uri` will redirect 
 
 ```compute_etags -m s3uri -b <bucket1> <bucket2> .. -k <key1> <key2> .. -p <pattern1> <pattern2> .. ```
 
-To check the integrity of local files or AWS S3 objects, the following will calculate or retrieve ETags or md5s on the list of files provided in a text file, and compare the results to the provided hashings. The input text file lists pairs of ETag/md5 hash and afile name, on each row. 
+To check the integrity of local files or AWS S3 objects, the following will calculate or retrieve ETags or md5s on the list of files provided in a text file, and compare the results to the provided hashings. Each row in the input text file represents a pair of ETag/md5 hash and a file name. 
 
 * Checking ETags of local files:
 

@@ -98,7 +98,8 @@ def parse_arguments(argsv: str = "") -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "-k", "--key", dest="key", action="store", nargs="+", help="S3URI Key.",
+        "-k", "--key", dest="key", action="store", nargs="+",
+        help="S3URI Key/s",
     )
 
     parser.add_argument(
@@ -126,6 +127,14 @@ def parse_arguments(argsv: str = "") -> argparse.Namespace:
         action="store",
         nargs="?",
         help="Save computed ETags to provided filename.",
+    )
+
+    parser.add_argument(
+        "-v",
+        "--version",
+        dest="version",
+        action="store_true",
+        help="Print version and exit.",
     )
 
     args = parser.parse_args(argsv)
